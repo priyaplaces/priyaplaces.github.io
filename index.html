@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Priya Marwaha — Designer</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    main {
+      width: min(1100px, 90vw);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8vh 0;
+    }
+
+    h1 {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: clamp(4rem, 12vw, 11rem);
+      line-height: 0.86;
+      letter-spacing: -0.07em;
+      font-weight: 900;
+      text-transform: uppercase;
+      max-width: 1000px;
+    }
+
+    .bio {
+      max-width: 680px;
+      margin-top: 2.5rem;
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      line-height: 1.5;
+      color: #fff;
+      opacity: 0.8;
+    }
+
+    .portfolio {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      width: fit-content;
+      margin-top: 5rem;
+      color: #fff;
+      text-decoration: none;
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      border-bottom: 2px solid #fff;
+      padding-bottom: 0.45rem;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .portfolio::after {
+      content: "↗";
+      font-size: 1.25em;
+      transition: transform 180ms ease;
+    }
+
+    .portfolio:hover {
+      opacity: 0.65;
+      transform: translateX(4px);
+    }
+
+    .portfolio:hover::after {
+      transform: translate(3px, -3px);
+    }
+
+    @media (max-width: 600px) {
+      main {
+        width: 88vw;
+      }
+
+      h1 {
+        font-size: clamp(3.5rem, 18vw, 7rem);
+      }
+
+      .portfolio {
+        margin-top: 3rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <h1>Priya<br>Marwaha</h1>
+
+    <p class="bio">
+      UI/UX and digital designer focused on creating thoughtful, intuitive,
+      and visually engaging digital experiences. I combine user-centered
+      design with strong visual systems to turn ideas into clear, polished,
+      and purposeful products.
+    </p>
+
+    <a
+      class="portfolio"
+      href="https://dribbble.com/ghostlyy1123"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Visit Priya Marwaha's Dribbble"
+    >
+      Dribbble
+    </a>
+  </main>
+</body>
+</html>
