@@ -1,1 +1,1 @@
-# priya.github.io
+# priyaplaces.github.io
