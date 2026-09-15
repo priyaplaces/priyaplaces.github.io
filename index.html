@@ -20,7 +20,7 @@
     .portfolio:hover::after{transform:translate(3px,-3px)}
     h1:hover{animation:titleIn 1000ms cubic-bezier(.16,1,.3,1) forwards,titleFloat 2800ms ease-in-out 1000ms infinite alternate}
 
-    .cursor{position:fixed;left:0;top:0;width:22px;height:22px;border-radius:50%;background:#fff;mix-blend-mode:difference;pointer-events:none;z-index:9999;transform:translate(-50%,-50%) scale(1);transition:width 220ms ease,height 220ms ease,background-color 220ms ease,transform 220ms ease}
+    .cursor{position:fixed;left:0;top:0;width:22px;height:22px;border-radius:50%;background:#fff;mix-blend-mode:difference;pointer-events:none;z-index:9999;translate:-50% -50%;transition:width 160ms ease,height 160ms ease,background-color 160ms ease}
     .cursor.link-hover{width:34px;height:34px;background:#0013de;mix-blend-mode:normal}
 
     @keyframes titleIn{from{opacity:0;transform:translateY(28px) scale(.985);letter-spacing:-.045em}to{opacity:1;transform:translateY(0) scale(1);letter-spacing:-.055em}}
@@ -45,25 +45,16 @@
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
-    let cursorX = mouseX;
-    let cursorY = mouseY;
 
     window.addEventListener('mousemove', (event) => {
       mouseX = event.clientX;
       mouseY = event.clientY;
+      cursor.style.left = `${mouseX}px`;
+      cursor.style.top = `${mouseY}px`;
     }, { passive: true });
-
-    function animateCursor() {
-      cursorX += (mouseX - cursorX) * 0.18;
-      cursorY += (mouseY - cursorY) * 0.18;
-      cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%) scale(1)`;
-      requestAnimationFrame(animateCursor);
-    }
 
     link.addEventListener('mouseenter', () => cursor.classList.add('link-hover'));
     link.addEventListener('mouseleave', () => cursor.classList.remove('link-hover'));
-
-    animateCursor();
   </script>
 </body>
 </html>
