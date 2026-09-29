@@ -24,9 +24,9 @@
     .portfolio:hover::after{transform:translate(3px,-3px)}
     .cursor{position:fixed;left:0;top:0;width:22px;height:22px;border-radius:50%;background:#ff7d00;mix-blend-mode:screen;pointer-events:none;z-index:9999;translate:-50% -50%;transition:width 220ms cubic-bezier(.16,1,.3,1),height 220ms cubic-bezier(.16,1,.3,1),opacity 220ms ease,background-color 220ms ease,box-shadow 220ms ease}
     .cursor.link-hover{width:34px;height:34px;background:#0013de}
-    .cursor.name-hover{mix-blend-mode:multiply}
-    .cursor-outline{position:fixed;left:0;top:0;width:22px;height:22px;border-radius:50%;border:2px solid #ff7d00;box-shadow:0 0 8px rgba(255,125,0,.35);pointer-events:none;z-index:10000;translate:-50% -50%;opacity:0;transition:width 220ms cubic-bezier(.16,1,.3,1),height 220ms cubic-bezier(.16,1,.3,1),opacity 220ms ease}
-    .cursor-outline.visible{opacity:1}
+    .cursor.name-hover{mix-blend-mode:multiply;width:18px;height:18px}
+    .cursor-outline{position:fixed;left:0;top:0;width:22px;height:22px;border-radius:50%;border:2px solid #ff7d00;box-shadow:0 0 8px rgba(255,125,0,.35);pointer-events:none;z-index:10000;translate:-50% -50%;opacity:0;transform:scale(.72);transition:width 260ms cubic-bezier(.16,1,.3,1),height 260ms cubic-bezier(.16,1,.3,1),opacity 260ms ease,transform 260ms cubic-bezier(.16,1,.3,1)}
+    .cursor-outline.visible{opacity:1;transform:scale(1)}
     .cursor-outline.link-size{width:34px;height:34px}
     .cursor-outline.drag-hidden{opacity:0!important}
     .cursor.hidden{opacity:0}
