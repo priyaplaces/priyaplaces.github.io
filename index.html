@@ -13,6 +13,8 @@
     body{background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:none}
     main{width:min(1100px,90vw);min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8vh 0}
     h1{font-family:"Montagu Slab",Georgia,serif;font-size:clamp(4rem,12vw,11rem);line-height:.86;letter-spacing:-.055em;font-weight:350;max-width:1000px;opacity:0;transform:translateY(28px) scale(.985);animation:titleIn 1000ms cubic-bezier(.16,1,.3,1) 120ms forwards}
+    .name-letter{display:inline-block;position:relative;touch-action:none;user-select:none;-webkit-user-select:none;will-change:transform,filter;text-shadow:0 0 0 rgba(255,125,0,0);transition:filter 180ms cubic-bezier(.2,.8,.2,1),text-shadow 180ms cubic-bezier(.2,.8,.2,1)}
+    .name-letter.is-moving{filter:brightness(1.12);text-shadow:0 0 8px rgba(255,125,0,.55),0 0 24px rgba(255,125,0,.3),0 0 42px rgba(255,125,0,.16)}
     .bio{max-width:680px;margin-top:2.5rem;font-size:clamp(1rem,1.5vw,1.25rem);line-height:1.5;color:#fff;opacity:0;transform:translateY(18px);animation:fadeUp 800ms cubic-bezier(.16,1,.3,1) 420ms forwards}
     .portfolio{display:inline-flex;align-items:center;gap:.7rem;width:fit-content;margin-top:5rem;color:#fff;text-decoration:none;font-size:clamp(1rem,1.5vw,1.25rem);font-weight:500;letter-spacing:.02em;border-bottom:1px solid #fff;padding-bottom:.45rem;opacity:0;transform:translateY(14px);animation:fadeUp 800ms cubic-bezier(.16,1,.3,1) 650ms forwards;transition:opacity 180ms ease,transform 180ms ease;cursor:none!important}
     .portfolio::after{content:"↗";font-size:1.25em;transition:transform 180ms ease}
@@ -24,7 +26,7 @@
 
     @keyframes titleIn{from{opacity:0;transform:translateY(28px) scale(.985);letter-spacing:-.045em}to{opacity:1;transform:translateY(0) scale(1);letter-spacing:-.055em}}
     @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:.8;transform:translateY(0)}}
-    @media (prefers-reduced-motion:reduce){h1,.bio,.portfolio{animation:none;opacity:1;transform:none}.cursor{transition:none}}
+    @media (prefers-reduced-motion:reduce){h1,.bio,.portfolio{animation:none;opacity:1;transform:none}.cursor{transition:none}.name-letter{transition:none}}
     @media (hover:none),(pointer:coarse){body{cursor:auto}.cursor{display:none}}
     @media (max-width:600px){main{width:88vw}h1{font-size:clamp(3.5rem,18vw,7rem)}.portfolio{margin-top:3rem}}
   </style>
@@ -32,7 +34,10 @@
 <body>
   <div class="cursor" aria-hidden="true"></div>
   <main>
-    <h1>Priya<br>Marwaha</h1>
+    <h1 aria-label="Priya Marwaha">
+      <span class="name-letter">P</span><span class="name-letter">r</span><span class="name-letter">i</span><span class="name-letter">y</span><span class="name-letter">a</span><br>
+      <span class="name-letter">M</span><span class="name-letter">a</span><span class="name-letter">r</span><span class="name-letter">w</span><span class="name-letter">a</span><span class="name-letter">h</span><span class="name-letter">a</span>
+    </h1>
     <p class="bio">UI/UX and digital designer focused on creating thoughtful, intuitive, and visually engaging digital experiences. I combine user-centered design with strong visual systems to turn ideas into clear, polished, and purposeful products.</p>
     <a class="portfolio" href="https://dribbble.com/ghostlyy1123" target="_blank" rel="noopener noreferrer" aria-label="Visit Priya Marwaha's Dribbble">Dribbble</a>
   </main>
@@ -40,6 +45,7 @@
   <script>
     const cursor = document.querySelector('.cursor');
     const link = document.querySelector('.portfolio');
+    const letters = [...document.querySelectorAll('.name-letter')];
 
     window.addEventListener('mousemove', (event) => {
       cursor.style.left = `${event.clientX}px`;
@@ -48,6 +54,117 @@
 
     link.addEventListener('mouseenter', () => cursor.classList.add('link-hover'));
     link.addEventListener('mouseleave', () => cursor.classList.remove('link-hover'));
+
+    // Each letter is its own little spring. Dragging temporarily takes control;
+    // releasing it hands the letter back to a damped spring so it settles naturally.
+    const physics = letters.map((element) => ({
+      element,
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      dragging: false,
+      pointerId: null,
+      offsetX: 0,
+      offsetY: 0,
+      lastX: 0,
+      lastY: 0,
+      lastTime: 0
+    }));
+
+    const stiffness = 0.095;
+    const damping = 0.78;
+    const maxSpeed = 3.2;
+
+    physics.forEach((state) => {
+      const { element } = state;
+
+      element.addEventListener('pointerdown', (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+        state.dragging = true;
+        state.pointerId = event.pointerId;
+        state.offsetX = event.clientX - state.x;
+        state.offsetY = event.clientY - state.y;
+        state.lastX = event.clientX;
+        state.lastY = event.clientY;
+        state.lastTime = performance.now();
+        state.vx = 0;
+        state.vy = 0;
+
+        element.classList.add('is-moving');
+        element.setPointerCapture(event.pointerId);
+        event.preventDefault();
+      });
+
+      element.addEventListener('pointermove', (event) => {
+        if (!state.dragging || event.pointerId !== state.pointerId) return;
+
+        const now = performance.now();
+        const dt = Math.max(8, now - state.lastTime);
+        const nextX = event.clientX - state.offsetX;
+        const nextY = event.clientY - state.offsetY;
+
+        // Estimate release velocity so the letter carries a little momentum.
+        state.vx = Math.max(-maxSpeed, Math.min(maxSpeed, (nextX - state.x) / dt * 16.67));
+        state.vy = Math.max(-maxSpeed, Math.min(maxSpeed, (nextY - state.y) / dt * 16.67));
+        state.x = nextX;
+        state.y = nextY;
+        state.lastX = event.clientX;
+        state.lastY = event.clientY;
+        state.lastTime = now;
+      });
+
+      const release = (event) => {
+        if (!state.dragging || (event && event.pointerId !== state.pointerId)) return;
+        state.dragging = false;
+        state.pointerId = null;
+        // Keep the captured velocity; the spring loop takes over immediately.
+        if (element.hasPointerCapture?.(event.pointerId)) element.releasePointerCapture(event.pointerId);
+      };
+
+      element.addEventListener('pointerup', release);
+      element.addEventListener('pointercancel', release);
+    });
+
+    let previousTime = performance.now();
+
+    function animateLetters(now) {
+      const frame = Math.min(2, (now - previousTime) / 16.67);
+      previousTime = now;
+
+      physics.forEach((state) => {
+        const { element } = state;
+
+        if (!state.dragging) {
+          // Damped spring toward the letter's original position.
+          state.vx += -state.x * stiffness * frame;
+          state.vy += -state.y * stiffness * frame;
+          state.vx *= Math.pow(damping, frame);
+          state.vy *= Math.pow(damping, frame);
+          state.x += state.vx * frame;
+          state.y += state.vy * frame;
+
+          if (Math.abs(state.x) < 0.08 && Math.abs(state.vx) < 0.08) {
+            state.x = 0;
+            state.vx = 0;
+          }
+          if (Math.abs(state.y) < 0.08 && Math.abs(state.vy) < 0.08) {
+            state.y = 0;
+            state.vy = 0;
+          }
+        }
+
+        const speed = Math.hypot(state.vx, state.vy);
+        const moving = state.dragging || speed > 0.16 || Math.abs(state.x) > 0.2 || Math.abs(state.y) > 0.2;
+        element.classList.toggle('is-moving', moving);
+        element.style.transform = `translate3d(${state.x}px,${state.y}px,0)`;
+      });
+
+      requestAnimationFrame(animateLetters);
+    }
+
+    requestAnimationFrame(animateLetters);
   </script>
 </body>
 </html>
