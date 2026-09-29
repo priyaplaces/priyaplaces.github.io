@@ -24,8 +24,11 @@
     .portfolio:hover::after{transform:translate(3px,-3px)}
     .cursor{position:fixed;left:0;top:0;width:22px;height:22px;border-radius:50%;background:#ff7d00;mix-blend-mode:screen;pointer-events:none;z-index:9999;translate:-50% -50%;transition:width 220ms cubic-bezier(.16,1,.3,1),height 220ms cubic-bezier(.16,1,.3,1),opacity 220ms ease,background-color 220ms ease,box-shadow 220ms ease}
     .cursor.link-hover{width:34px;height:34px;background:#0013de}
-    .cursor.name-hover{mix-blend-mode:multiply;box-shadow:0 0 0 1.5px #ff7d00,0 0 8px rgba(255,125,0,.35)}
-    .cursor.link-hover.name-hover{mix-blend-mode:screen;box-shadow:none}
+    .cursor.name-hover{mix-blend-mode:multiply}
+    .cursor-outline{position:fixed;left:0;top:0;width:22px;height:22px;border-radius:50%;border:2px solid #ff7d00;box-shadow:0 0 8px rgba(255,125,0,.35);pointer-events:none;z-index:10000;translate:-50% -50%;opacity:0;transition:width 220ms cubic-bezier(.16,1,.3,1),height 220ms cubic-bezier(.16,1,.3,1),opacity 220ms ease}
+    .cursor-outline.visible{opacity:1}
+    .cursor-outline.link-size{width:34px;height:34px}
+    .cursor-outline.drag-hidden{opacity:0!important}
     .cursor.hidden{opacity:0}
     @keyframes titleIn{from{opacity:0;transform:translateY(28px) scale(.985);letter-spacing:-.045em}to{opacity:1;transform:translateY(0) scale(1);letter-spacing:-.055em}}
     @keyframes hintIn{from{opacity:0;transform:translateY(8px)}to{opacity:.48;transform:translateY(0)}}
@@ -36,6 +39,7 @@
   </style>
 </head>
 <body>
+  <div class="cursor-outline" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"></div>
   <main>
     <div class="drag-hint" aria-hidden="true">Try dragging the letters</div>
@@ -49,6 +53,7 @@
 
   <script>
     const cursor = document.querySelector('.cursor');
+    const cursorOutline = document.querySelector('.cursor-outline');
     const link = document.querySelector('.portfolio');
     const hint = document.querySelector('.drag-hint');
     const letters = [...document.querySelectorAll('.name-letter')];
@@ -66,12 +71,20 @@
       cursorY+=(targetCursorY-cursorY)*.22;
       cursor.style.left=cursorX+'px';
       cursor.style.top=cursorY+'px';
+      cursorOutline.style.left=cursorX+'px';
+      cursorOutline.style.top=cursorY+'px';
       requestAnimationFrame(animateCursor);
     }
     requestAnimationFrame(animateCursor);
 
-    link.addEventListener('mouseenter', () => cursor.classList.add('link-hover'));
-    link.addEventListener('mouseleave', () => cursor.classList.remove('link-hover'));
+    link.addEventListener('mouseenter', () => {
+      cursor.classList.add('link-hover');
+      cursorOutline.classList.add('link-size');
+    });
+    link.addEventListener('mouseleave', () => {
+      cursor.classList.remove('link-hover');
+      cursorOutline.classList.remove('link-size');
+    });
 
     const physics = letters.map((element) => ({
       element,x:0,y:0,vx:0,vy:0,dragging:false,pointerId:null,
@@ -88,6 +101,7 @@
 
     function setCursorHidden(hidden){
       cursor.classList.toggle('hidden',hidden);
+      cursorOutline.classList.toggle('drag-hidden',hidden);
     }
 
     physics.forEach((state)=>{
@@ -96,10 +110,12 @@
       element.addEventListener('pointerenter',()=>{
         element.classList.add('is-hovered');
         cursor.classList.add('name-hover');
+        cursorOutline.classList.add('visible');
       });
       element.addEventListener('pointerleave',()=>{
         element.classList.remove('is-hovered');
         cursor.classList.remove('name-hover');
+        cursorOutline.classList.remove('visible');
       });
 
       element.addEventListener('pointerdown',(event)=>{
