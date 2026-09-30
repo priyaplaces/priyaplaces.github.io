@@ -58,24 +58,12 @@
     const hint = document.querySelector('.drag-hint');
     const letters = [...document.querySelectorAll('.name-letter')];
 
-    let cursorX=window.innerWidth/2,cursorY=window.innerHeight/2;
-    let targetCursorX=cursorX,targetCursorY=cursorY;
-
     window.addEventListener('mousemove', (event) => {
-      targetCursorX=event.clientX;
-      targetCursorY=event.clientY;
+      cursor.style.left=event.clientX+'px';
+      cursor.style.top=event.clientY+'px';
+      cursorOutline.style.left=event.clientX+'px';
+      cursorOutline.style.top=event.clientY+'px';
     }, { passive:true });
-
-    function animateCursor(){
-      cursorX+=(targetCursorX-cursorX)*.22;
-      cursorY+=(targetCursorY-cursorY)*.22;
-      cursor.style.left=cursorX+'px';
-      cursor.style.top=cursorY+'px';
-      cursorOutline.style.left=cursorX+'px';
-      cursorOutline.style.top=cursorY+'px';
-      requestAnimationFrame(animateCursor);
-    }
-    requestAnimationFrame(animateCursor);
 
     link.addEventListener('mouseenter', () => {
       cursor.classList.add('link-hover');
