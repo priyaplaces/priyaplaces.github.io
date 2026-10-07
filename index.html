@@ -12,11 +12,9 @@
     html,body{width:100%;min-height:100%}
     body{background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:none}
     main{width:min(1100px,90vw);min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8vh 0}
-    .drag-hint{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#fff;opacity:0;transform:translateY(8px);margin-bottom:1.35rem;animation:hintIn 700ms cubic-bezier(.16,1,.3,1) 250ms forwards;transition:opacity 300ms ease}
-    .drag-hint.hidden{opacity:0!important}
     h1{font-family:"Montagu Slab",Georgia,serif;font-size:clamp(4rem,12vw,11rem);line-height:.86;letter-spacing:-.055em;font-weight:350;max-width:1000px;opacity:0;transform:translateY(28px) scale(.985);animation:titleIn 1000ms cubic-bezier(.16,1,.3,1) 120ms forwards}
-    .name-letter{display:inline-block;position:relative;touch-action:none;user-select:none;-webkit-user-select:none;will-change:transform,filter;text-shadow:0 0 0 rgba(255,125,0,0);transition:filter 180ms cubic-bezier(.2,.8,.2,1),text-shadow 180ms cubic-bezier(.2,.8,.2,1)}
-    .name-letter.is-moving,.name-letter:hover{filter:brightness(1.12);text-shadow:0 0 8px rgba(255,125,0,.6),0 0 24px rgba(255,125,0,.34),0 0 42px rgba(255,125,0,.18)}
+    .name-letter{display:inline-block;position:relative;user-select:none;-webkit-user-select:none;will-change:transform,filter;text-shadow:0 0 0 rgba(255,125,0,0);transition:filter 180ms cubic-bezier(.2,.8,.2,1),text-shadow 180ms cubic-bezier(.2,.8,.2,1)}
+    .name-letter.is-moving{filter:brightness(1.12);text-shadow:0 0 8px rgba(255,125,0,.6),0 0 24px rgba(255,125,0,.34),0 0 42px rgba(255,125,0,.18)}
     .bio{max-width:680px;margin-top:2.5rem;font-size:clamp(1rem,1.5vw,1.25rem);line-height:1.5;color:#fff;opacity:0;transform:translateY(18px);animation:fadeUp 800ms cubic-bezier(.16,1,.3,1) 420ms forwards}
     .portfolio{display:inline-flex;align-items:center;gap:.85rem;width:fit-content;margin-top:4.5rem;color:#fff;text-decoration:none;font-size:clamp(1.2rem,2vw,1.65rem);font-weight:600;letter-spacing:.015em;border-bottom:1px solid rgba(255,255,255,.8);padding:.2rem 0 .6rem;opacity:0;transform:translateY(14px);animation:fadeUp 800ms cubic-bezier(.16,1,.3,1) 650ms forwards;transition:opacity 180ms ease,transform 180ms ease,border-color 180ms ease;cursor:none!important}
     .portfolio::after{content:"✳";font-size:1.05em;line-height:1;color:#ff7d00;transition:transform 220ms cubic-bezier(.16,1,.3,1),color 180ms ease}
@@ -25,25 +23,17 @@
     .portfolio:hover::after{transform:rotate(45deg) scale(1.12);color:#ff9a33}
     .cursor{position:fixed;left:0;top:0;width:22px;height:22px;border-radius:50%;background:#ff7d00;mix-blend-mode:screen;pointer-events:none;z-index:9999;translate:-50% -50%;transition:width 220ms cubic-bezier(.16,1,.3,1),height 220ms cubic-bezier(.16,1,.3,1),opacity 220ms ease,background-color 220ms ease,box-shadow 220ms ease}
     .cursor.link-hover{width:34px;height:34px;background:#ff7d00}
-    .cursor.name-hover{mix-blend-mode:multiply;width:18px;height:18px}
-    .cursor-outline{position:fixed;left:0;top:0;width:22px;height:22px;border-radius:50%;border:2px solid #ff7d00;box-shadow:0 0 8px rgba(255,125,0,.35);pointer-events:none;z-index:10000;translate:-50% -50%;opacity:0;transform:scale(.72);transition:width 260ms cubic-bezier(.16,1,.3,1),height 260ms cubic-bezier(.16,1,.3,1),opacity 260ms ease,transform 260ms cubic-bezier(.16,1,.3,1)}
-    .cursor-outline.visible{opacity:1;transform:scale(1)}
-    .cursor-outline.link-size{width:34px;height:34px}
-    .cursor-outline.drag-hidden{opacity:0!important}
-    .cursor.hidden{opacity:0}
     @keyframes titleIn{from{opacity:0;transform:translateY(28px) scale(.985);letter-spacing:-.045em}to{opacity:1;transform:translateY(0) scale(1);letter-spacing:-.055em}}
     @keyframes hintIn{from{opacity:0;transform:translateY(8px)}to{opacity:.48;transform:translateY(0)}}
     @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:.8;transform:translateY(0)}}
-    @media (prefers-reduced-motion:reduce){h1,.bio,.portfolio,.drag-hint{animation:none;opacity:1;transform:none}.cursor{transition:none}.name-letter{transition:none}}
+    @media (prefers-reduced-motion:reduce){h1,.bio,.portfolio{animation:none;opacity:1;transform:none}.cursor{transition:none}.name-letter{transition:none}}
     @media (hover:none),(pointer:coarse){body{cursor:auto}.cursor{display:none}}
     @media (max-width:600px){main{width:88vw}h1{font-size:clamp(3.5rem,18vw,7rem)}.portfolio{margin-top:3rem}}
   </style>
 </head>
 <body>
-  <div class="cursor-outline" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"></div>
   <main>
-    <div class="drag-hint" aria-hidden="true">Try dragging the letters</div>
     <h1 aria-label="Priya Marwaha">
       <span class="name-letter">P</span><span class="name-letter">r</span><span class="name-letter">i</span><span class="name-letter">y</span><span class="name-letter">a</span><br>
       <span class="name-letter">M</span><span class="name-letter">a</span><span class="name-letter">r</span><span class="name-letter">w</span><span class="name-letter">a</span><span class="name-letter">h</span><span class="name-letter">a</span>
@@ -54,96 +44,46 @@
 
   <script>
     const cursor = document.querySelector('.cursor');
-    const cursorOutline = document.querySelector('.cursor-outline');
     const link = document.querySelector('.portfolio');
-    const hint = document.querySelector('.drag-hint');
     const letters = [...document.querySelectorAll('.name-letter')];
 
     window.addEventListener('mousemove', (event) => {
       cursor.style.left=event.clientX+'px';
       cursor.style.top=event.clientY+'px';
-      cursorOutline.style.left=event.clientX+'px';
-      cursorOutline.style.top=event.clientY+'px';
     }, { passive:true });
 
-    link.addEventListener('mouseenter', () => {
-      cursor.classList.add('link-hover');
-      cursorOutline.classList.add('link-size');
-    });
-    link.addEventListener('mouseleave', () => {
-      cursor.classList.remove('link-hover');
-      cursorOutline.classList.remove('link-size');
-    });
+
+    link.addEventListener('mouseenter', () => cursor.classList.add('link-hover'));
+    link.addEventListener('mouseleave', () => cursor.classList.remove('link-hover'));
 
     const physics = letters.map((element) => ({
-      element,x:0,y:0,vx:0,vy:0,dragging:false,pointerId:null,
-      offsetX:0,offsetY:0,lastX:0,lastY:0,lastTime:0,
-      collisionGlow:0,collisionGlowUntil:0
+      element,
+      x:0,y:0,vx:0,vy:0,
+      collisionGlowUntil:0
     }));
 
     const stiffness=.095,damping=.78,maxSpeed=3.2;
     const collisionStrength=.72;
+    const avoidRadius=115;
+    const avoidStrength=2.7;
+    const avoidFalloff=0.72;
 
-    function wake(state, amount=1){
+    let pointerX=-10000,pointerY=-10000;
+    let pointerActive=false;
+
+    window.addEventListener('mousemove',(event)=>{
+      pointerX=event.clientX;
+      pointerY=event.clientY;
+      pointerActive=true;
+    },{passive:true});
+
+    window.addEventListener('mouseleave',()=>{
+      pointerActive=false;
+    });
+
+    function wake(state,amount=1){
       state.collisionGlowUntil=performance.now()+180+Math.min(260,amount*55);
     }
-
-    function setCursorHidden(hidden){
-      cursor.classList.toggle('hidden',hidden);
-      cursorOutline.classList.toggle('drag-hidden',hidden);
-    }
-
-    physics.forEach((state)=>{
-      const {element}=state;
-
-      element.addEventListener('pointerenter',()=>{
-        element.classList.add('is-hovered');
-        cursor.classList.add('name-hover');
-        cursorOutline.classList.add('visible');
-      });
-      element.addEventListener('pointerleave',()=>{
-        element.classList.remove('is-hovered');
-        cursor.classList.remove('name-hover');
-        cursorOutline.classList.remove('visible');
-      });
-
-      element.addEventListener('pointerdown',(event)=>{
-        if(event.pointerType==='mouse'&&event.button!==0)return;
-        state.dragging=true;
-        setCursorHidden(true);
-        state.pointerId=event.pointerId;
-        state.offsetX=event.clientX-state.x;
-        state.offsetY=event.clientY-state.y;
-        state.lastX=event.clientX;
-        state.lastY=event.clientY;
-        state.lastTime=performance.now();
-        state.vx=0;state.vy=0;
-        hint.classList.add('hidden');
-        wake(state,2);
-        element.setPointerCapture(event.pointerId);
-        event.preventDefault();
-      });
-
-      element.addEventListener('pointermove',(event)=>{
-        if(!state.dragging||event.pointerId!==state.pointerId)return;
-        const now=performance.now(),dt=Math.max(8,now-state.lastTime);
-        const nextX=event.clientX-state.offsetX,nextY=event.clientY-state.offsetY;
-        state.vx=Math.max(-maxSpeed,Math.min(maxSpeed,(nextX-state.x)/dt*16.67));
-        state.vy=Math.max(-maxSpeed,Math.min(maxSpeed,(nextY-state.y)/dt*16.67));
-        state.x=nextX;state.y=nextY;
-        state.lastX=event.clientX;state.lastY=event.clientY;state.lastTime=now;
-      });
-
-      const release=(event)=>{
-        if(!state.dragging||(event&&event.pointerId!==state.pointerId))return;
-        state.dragging=false;
-        state.pointerId=null;
-        setCursorHidden(false);
-        if(event&&element.hasPointerCapture?.(event.pointerId))element.releasePointerCapture(event.pointerId);
-      };
-      element.addEventListener('pointerup',release);
-      element.addEventListener('pointercancel',release);
-    });
 
     function collide(){
       for(let i=0;i<physics.length;i++){
@@ -163,12 +103,13 @@
 
             if(relativeVelocity<0||overlap>0){
               const impulse=Math.min(2.5,overlap*.055+Math.max(0,-relativeVelocity)*collisionStrength);
-              if(!a.dragging){a.vx-=nx*impulse;a.vy-=ny*impulse}
-              if(!b.dragging){b.vx+=nx*impulse;b.vy+=ny*impulse}
+              a.vx-=nx*impulse;a.vy-=ny*impulse;
+              b.vx+=nx*impulse;b.vy+=ny*impulse;
+
               if(overlap>0){
                 const push=overlap*.24;
-                if(!a.dragging){a.x-=nx*push;a.y-=ny*push}
-                if(!b.dragging){b.x+=nx*push;b.y+=ny*push}
+                a.x-=nx*push;a.y-=ny*push;
+                b.x+=nx*push;b.y+=ny*push;
               }
               wake(a,impulse);wake(b,impulse);
             }
@@ -184,23 +125,43 @@
       previousTime=now;
 
       physics.forEach((state)=>{
-        if(!state.dragging){
-          state.vx+=-state.x*stiffness*frame;
-          state.vy+=-state.y*stiffness*frame;
-          state.vx*=Math.pow(damping,frame);
-          state.vy*=Math.pow(damping,frame);
-          state.x+=state.vx*frame;
-          state.y+=state.vy*frame;
-          if(Math.abs(state.x)<.08&&Math.abs(state.vx)<.08){state.x=0;state.vx=0}
-          if(Math.abs(state.y)<.08&&Math.abs(state.vy)<.08){state.y=0;state.vy=0}
+        const rect=state.element.getBoundingClientRect();
+        const cx=rect.left+rect.width/2;
+        const cy=rect.top+rect.height/2;
+
+        if(pointerActive){
+          const dx=cx-pointerX;
+          const dy=cy-pointerY;
+          const distance=Math.hypot(dx,dy);
+
+          if(distance<avoidRadius){
+            const nx=distance?dx/distance:1;
+            const ny=distance?dy/distance:0;
+            const falloff=Math.pow(1-distance/avoidRadius,avoidFalloff);
+            const force=avoidStrength*falloff*frame;
+            state.vx+=nx*force;
+            state.vy+=ny*force;
+          }
         }
+
+        state.vx+=-state.x*stiffness*frame;
+        state.vy+=-state.y*stiffness*frame;
+        state.vx*=Math.pow(damping,frame);
+        state.vy*=Math.pow(damping,frame);
+        state.vx=Math.max(-maxSpeed,Math.min(maxSpeed,state.vx));
+        state.vy=Math.max(-maxSpeed,Math.min(maxSpeed,state.vy));
+        state.x+=state.vx*frame;
+        state.y+=state.vy*frame;
+
+        if(Math.abs(state.x)<.08&&Math.abs(state.vx)<.08){state.x=0;state.vx=0}
+        if(Math.abs(state.y)<.08&&Math.abs(state.vy)<.08){state.y=0;state.vy=0}
       });
 
       collide();
 
       physics.forEach((state)=>{
         const speed=Math.hypot(state.vx,state.vy);
-        const moving=state.dragging||speed>.16||Math.abs(state.x)>.2||Math.abs(state.y)>.2||state.collisionGlowUntil>now;
+        const moving=speed>.16||Math.abs(state.x)>.2||Math.abs(state.y)>.2||state.collisionGlowUntil>now;
         state.element.classList.toggle('is-moving',moving);
         state.element.style.transform='translate3d('+state.x+'px,'+state.y+'px,0)';
       });
