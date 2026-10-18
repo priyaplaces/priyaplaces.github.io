@@ -69,7 +69,7 @@
 
       const style = getComputedStyle(letter);
       const pixelScale = 1 - proximity * 0.88;
-      const pixelSize = Math.max(1, Math.round(1 + proximity * 22));
+      const pixelSize = Math.max(1, Math.round(1 + proximity * 12));
       const width = Math.max(1, Math.ceil(rect.width / pixelSize));
       const height = Math.max(1, Math.ceil(rect.height / pixelSize));
       canvas.width = width;
@@ -89,19 +89,19 @@
       if (proximity > 0.08) {
         const random = seededRandom((index + 1) * 92821 + level * 731);
         const intensity = proximity;
-        const speckles = Math.round(2 + intensity * 30);
+        const speckles = Math.round(1 + intensity * 14);
 
         // Detached square pixels around the glyph.
         for (let i = 0; i < speckles; i++) {
           const x = Math.floor(random() * width);
           const y = Math.floor(random() * height);
           const size = random() < 0.75 ? 1 : 2;
-          ctx.fillStyle = random() < 0.68 ? '#fff' : '#000';
+          ctx.fillStyle = random() < 0.88 ? '#fff' : '#000';
           ctx.fillRect(x, y, size, size);
         }
 
         // Short horizontal glitch slices and gaps.
-        const bars = Math.round(intensity * 5);
+        const bars = Math.round(intensity * 3);
         for (let i = 0; i < bars; i++) {
           const y = Math.floor(random() * height);
           const barWidth = Math.max(1, Math.floor(width * (0.15 + random() * 0.8)));
