@@ -69,7 +69,7 @@
 
       const style = getComputedStyle(letter);
       const pixelScale = 1 - proximity * 0.88;
-      const pixelSize = Math.max(2, Math.round(2 + proximity * 17));
+      const pixelSize = Math.max(1, Math.round(1 + proximity * 22));
       const width = Math.max(1, Math.ceil(rect.width / pixelSize));
       const height = Math.max(1, Math.ceil(rect.height / pixelSize));
       canvas.width = width;
@@ -124,7 +124,7 @@
         const dx = pointerX - (rect.left + rect.width / 2);
         const dy = pointerY - (rect.top + rect.height / 2);
         const distance = Math.hypot(dx, dy);
-        const radius = 280;
+        const radius = 190;
         const proximity = Math.max(0, 1 - distance / radius);
         renderLetter(item, proximity);
       });
