@@ -83,7 +83,7 @@
       ctx.textBaseline = 'alphabetic';
       ctx.textAlign = 'left';
       const fontSize = parseFloat(style.fontSize) || rect.height;
-      ctx.font = style.font.replace(/\\d+(?:\\.\\d+)?px/, (match) => (parseFloat(match) / pixelSize) + 'px');
+      ctx.font = style.fontStyle + ' ' + style.fontWeight + ' ' + (fontSize / pixelSize) + 'px ' + style.fontFamily;
       ctx.fillText(letter.textContent, 0, (rect.height * 0.82) / pixelSize);
 
       if (proximity > 0.08) {
