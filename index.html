@@ -36,93 +36,62 @@
 
   <script>
     const letters = [...document.querySelectorAll('.name-letter')];
-    const pixelCanvases = [];
+    const light = document.createElement('div');
+    light.setAttribute('aria-hidden', 'true');
+    Object.assign(light.style, {
+      position: 'fixed',
+      width: 'min(34rem, 75vw)',
+      height: 'min(34rem, 75vw)',
+      borderRadius: '50%',
+      pointerEvents: 'none',
+      zIndex: '0',
+      transform: 'translate(-50%, -50%)',
+      background: 'radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.055) 24%, rgba(255,255,255,0.018) 48%, transparent 70%)',
+      opacity: '0',
+      transition: 'opacity 180ms ease'
+    });
+    document.body.appendChild(light);
 
-    function setupLetter(letter, index) {
-      const canvas = document.createElement('canvas');
-      canvas.className = 'pixel-letter';
-      canvas.setAttribute('aria-hidden', 'true');
-      letter.appendChild(canvas);
-      pixelCanvases.push({ letter, canvas, index, lastLevel: -1 });
-    }
-
-    letters.forEach(setupLetter);
-
-    function seededRandom(seed) {
-      let value = seed >>> 0;
-      return () => {
-        value = (value * 1664525 + 1013904223) >>> 0;
-        return value / 4294967296;
-      };
-    }
-
-    function renderLetter(item, proximity) {
-      const { letter, canvas } = item;
-      const rect = letter.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-
-      // Leave the real text visible and crisp by default; only show the canvas near the pointer.
-      if (proximity <= 0.05) {
-        canvas.style.opacity = '0';
-        item.lastLevel = 0;
-        return;
-      }
-
-      const level = Math.round(proximity * 8);
-      if (item.lastLevel === level) return;
-      item.lastLevel = level;
-
-      const style = getComputedStyle(letter);
-      const pixelSize = Math.max(1, Math.round(1 + proximity * 6));
-      const width = Math.max(1, Math.ceil(rect.width / pixelSize));
-      const height = Math.max(1, Math.ceil(rect.height / pixelSize));
-      canvas.width = width;
-      canvas.height = height;
-      canvas.style.width = rect.width + 'px';
-      canvas.style.height = rect.height + 'px';
-      canvas.style.opacity = String(Math.min(0.42, proximity * 0.65));
-
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = '#fff';
-      ctx.textBaseline = 'alphabetic';
-      ctx.textAlign = 'left';
-      const fontSize = parseFloat(style.fontSize) || rect.height;
-      ctx.font = style.fontStyle + ' ' + style.fontWeight + ' ' + (fontSize / pixelSize) + 'px ' + style.fontFamily;
-      ctx.fillText(letter.textContent, 0, (rect.height * 0.82) / pixelSize);
-    }
-
-    let pointerX = -10000, pointerY = -10000;
-    function updatePixelation() {
-      pixelCanvases.forEach((item) => {
-        const rect = item.letter.getBoundingClientRect();
-        const dx = pointerX - (rect.left + rect.width / 2);
-        const dy = pointerY - (rect.top + rect.height / 2);
-        const distance = Math.hypot(dx, dy);
-        const radius = 190;
-        const proximity = Math.max(0, 1 - distance / radius);
-        renderLetter(item, proximity);
+    // The pointer acts like a soft moving spotlight. Letters brighten as it passes over them.
+    const baseColor = [255, 255, 255];
+    function updateLight(x, y) {
+      light.style.left = x + 'px';
+      light.style.top = y + 'px';
+      light.style.opacity = '1';
+      letters.forEach((letter) => {
+        const rect = letter.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const distance = Math.hypot(x - cx, y - cy);
+        const radius = 260;
+        const strength = Math.max(0, 1 - distance / radius);
+        // Use subtle luminance and shadow rather than changing the letter shapes.
+        letter.style.textShadow = strength > 0
+          ? '0 0 ' + (strength * 10).toFixed(1) + 'px rgba(255,255,255,' + (strength * 0.22).toFixed(3) + ')'
+          : 'none';
+        letter.style.opacity = String(0.78 + strength * 0.22);
       });
     }
 
     window.addEventListener('mousemove', (event) => {
-      pointerX = event.clientX;
-      pointerY = event.clientY;
-      updatePixelation();
+      updateLight(event.clientX, event.clientY);
     }, { passive: true });
 
-    window.addEventListener('resize', () => {
-      pixelCanvases.forEach((item) => { item.lastLevel = -1; });
-      updatePixelation();
-    }, { passive: true });
-    window.addEventListener('load', updatePixelation);
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(() => {
-        pixelCanvases.forEach((item) => { item.lastLevel = -1; });
-        updatePixelation();
+    window.addEventListener('mouseleave', () => {
+      light.style.opacity = '0';
+      letters.forEach((letter) => {
+        letter.style.textShadow = 'none';
+        letter.style.opacity = '';
       });
-    }
-    updatePixelation();
+    });
+
+    window.addEventListener('resize', () => {
+      // Recompute the light interaction on resize without altering typography.
+      letters.forEach((letter) => {
+        letter.style.textShadow = 'none';
+        letter.style.opacity = '';
+      });
+    }, { passive: true });
   </script>
 </body>
 </html>
