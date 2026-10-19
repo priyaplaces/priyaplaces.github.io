@@ -40,13 +40,13 @@
     light.setAttribute('aria-hidden', 'true');
     Object.assign(light.style, {
       position: 'fixed',
-      width: 'min(34rem, 75vw)',
-      height: 'min(34rem, 75vw)',
+      width: 'min(42rem, 90vw)',
+      height: 'min(42rem, 90vw)',
       borderRadius: '50%',
       pointerEvents: 'none',
       zIndex: '0',
       transform: 'translate(-50%, -50%)',
-      background: 'radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.055) 24%, rgba(255,255,255,0.018) 48%, transparent 70%)',
+      background: 'radial-gradient(circle, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 18%, rgba(255,255,255,0.065) 38%, rgba(255,255,255,0.018) 58%, transparent 74%)',
       opacity: '0',
       transition: 'opacity 180ms ease'
     });
@@ -63,13 +63,13 @@
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
         const distance = Math.hypot(x - cx, y - cy);
-        const radius = 260;
+        const radius = 340;
         const strength = Math.max(0, 1 - distance / radius);
         // Use subtle luminance and shadow rather than changing the letter shapes.
         letter.style.textShadow = strength > 0
-          ? '0 0 ' + (strength * 10).toFixed(1) + 'px rgba(255,255,255,' + (strength * 0.22).toFixed(3) + ')'
+          ? '0 0 ' + (strength * 22).toFixed(1) + 'px rgba(255,255,255,' + (strength * 0.48).toFixed(3) + ')'
           : 'none';
-        letter.style.opacity = String(0.78 + strength * 0.22);
+        letter.style.opacity = String(0.62 + strength * 0.38);
       });
     }
 
